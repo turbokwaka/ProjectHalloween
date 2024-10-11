@@ -2,13 +2,22 @@ using UnityEngine;
 
 public class ObjectGrabbable : MonoBehaviour
 {
-    private Transform _objectGrabPointTransform;
+    public Transform _objectGrabPointTransform;
     private Rigidbody _objectRigidbody;
 
     public void Grab(Transform objectGrabPointTransform)
     {
         _objectGrabPointTransform = objectGrabPointTransform;
         _objectRigidbody = GetComponent<Rigidbody>();
+        
+        _objectRigidbody.useGravity = false;
+        _objectRigidbody.velocity = Vector3.zero;
+    }
+
+    public void Drop()
+    {
+        _objectRigidbody.useGravity = true;
+        _objectGrabPointTransform = null;
     }
 
     private void FixedUpdate()

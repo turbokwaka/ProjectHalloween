@@ -7,49 +7,82 @@ public class Selection : MonoBehaviour
 
     public Transform playerCameraTransform;
     public Transform objectGrabPointTransform;
-    public float maxRaycastDistance; // Adjust this value based on your game requirements
+    public float maxRaycastDistance = 5f; // You can adjust this value in the Inspector
 
-    void FixedUpdate()
+    void Update()
     {
-        if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward,out RaycastHit hit, maxRaycastDistance))
+        // Cast a ray from the camera forward
+        if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, maxRaycastDistance))
         {
-            // HIGHLIGHT OBJECT
-            if (hit.collider.CompareTag("Selectable"))
+            HandleHighlight(hit);
+            HandleGrab(hit);
+            HandeDrop(hit);
+        }
+        else
+        {
+            RemoveHighlight();
+        }
+    }
+
+    private void HandleHighlight(RaycastHit hit)
+    {
+        // Check if the hit object is selectable
+        if (hit.collider.CompareTag("Selectable") && !hit.collider.GetComponent<ObjectGrabbable>()._objectGrabPointTransform)
+        {
+            GameObject hitObject = hit.collider.gameObject; 
+
+            // If we're pointing at a new object, update the highlight
+            if (_highlightedObject != hitObject)
             {
-                var selectedObject = hit.collider.gameObject;
+                RemoveHighlight();
 
-                // Only highlight if the hit object is within a reasonable distance and the object isn't already highlighted
-                if (_highlightedObject != selectedObject && hit.distance <= maxRaycastDistance)
+                _highlightedObject = hitObject;
+                _highlightedOutline = _highlightedObject.GetComponent<Outline>();
+
+                if (_highlightedOutline != null)
                 {
-                    RemoveHighlight(); // Remove the previous highlight if we switch to a new object
-
-                    _highlightedObject = selectedObject;
-                    _highlightedOutline = _highlightedObject.GetComponent<Outline>();
-
-                    _highlightedOutline.OutlineWidth = 2f;
+                    _highlightedOutline.OutlineWidth = 6f;
                 }
             }
-            else
-            {
-                RemoveHighlight(); // Remove highlight when no object is hit
-            }
-            
-            // GRAB OBJECT
-            if (hit.transform.TryGetComponent(out ObjectGrabbable objectGrabbable) && Input.GetKeyDown(KeyCode.E))
+        }
+        else
+        {
+            RemoveHighlight();
+        }
+    }
+
+    private void HandleGrab(RaycastHit hit)
+    {
+        // Check for the grab input
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (hit.transform.TryGetComponent(out ObjectGrabbable objectGrabbable))
             {
                 objectGrabbable.Grab(objectGrabPointTransform);
-                RemoveHighlight();
+            }
+        }
+    }
+
+    private void HandeDrop(RaycastHit hit)
+    {
+        // Check for the grab input
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            if (hit.transform.TryGetComponent(out ObjectGrabbable objectGrabbable))
+            {
+                objectGrabbable.Drop();
             }
         }
     }
 
     private void RemoveHighlight()
     {
-        if (_highlightedObject != null && _highlightedOutline != null)
+        if (_highlightedOutline != null)
         {
-            _highlightedOutline.OutlineWidth = 0; // Disable the outline
-            _highlightedObject = null;
-            _highlightedOutline = null;
+            _highlightedOutline.OutlineWidth = 0;
         }
+
+        _highlightedObject = null;
+        _highlightedOutline = null;
     }
 }

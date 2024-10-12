@@ -421,6 +421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _objectGrabPointTransform: {fileID: 0}
+  _objectLookAt: {fileID: 0}
 --- !u!54 &161185377
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1832,6 +1833,11 @@ PrefabInstance:
       propertyPath: m_Drag
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3972955471062413957, guid: 577404b5245954d4b8b7709e1482b067,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -1620737081595566143, guid: 577404b5245954d4b8b7709e1482b067,
         type: 3}
       propertyPath: m_Radius
@@ -1896,6 +1902,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7785211659244910142, guid: 577404b5245954d4b8b7709e1482b067,
+        type: 3}
+      propertyPath: _objectLookAt
+      value: 
+      objectReference: {fileID: 1566876101}
+    - target: {fileID: 7785211659244910142, guid: 577404b5245954d4b8b7709e1482b067,
+        type: 3}
+      propertyPath: _objectGrabPointTransform
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

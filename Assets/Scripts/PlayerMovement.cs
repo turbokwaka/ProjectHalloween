@@ -12,12 +12,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField][Range(0.0f, 0.5f)] float moveSmoothTime = 0.3f;
     [SerializeField] float gravity = -30f;
     [SerializeField] Transform groundCheck;
-    [SerializeField] LayerMask ground;  
+    [SerializeField] LayerMask ground;
 
     public float jumpHeight = 6f;
     float velocityY;
-    public bool isGrounded;
-    public bool isWalking;
+    private bool isGrounded;
+    private bool isWalking;
+    private bool wasGrounded;
 
     float cameraCap;
     Vector2 currentMouseDelta;
@@ -48,7 +49,14 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         isWalking = controller.velocity.magnitude > 0.1;
+
+        wasGrounded = isGrounded;
         isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f, ground);
+
+        if (!wasGrounded && isGrounded)
+        {
+            SoundManager.Instance.Play("landing-on-grass");
+        }
         
         controller.Move(velocity * Time.deltaTime);
     }
@@ -80,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * Speed + Vector3.up * velocityY;
         
         controller.Move(velocity * Time.deltaTime);
-
+        
         if (isGrounded && Input.GetButtonDown("Jump"))
         {
             velocityY = Mathf.Sqrt(jumpHeight * -2f * gravity);

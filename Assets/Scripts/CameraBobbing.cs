@@ -5,7 +5,7 @@ public class Headbob : MonoBehaviour
     [Header("Configuration")] [SerializeField]
     private bool _enable = true;
 
-    [SerializeField] [Range(0, 0.1f)] private float _Amplitude = 0.015f;
+    [SerializeField] [Range(0, 0.01f)] private float _Amplitude = 0.01f;
     [SerializeField] [Range(0, 30)] private float _frequency = 10.0f;
     [SerializeField] private Transform _camera;
     [SerializeField] private Transform _cameraHolder;
@@ -52,7 +52,7 @@ public class Headbob : MonoBehaviour
     {
         var pos = new Vector3(transform.position.x, transform.position.y + _cameraHolder.localPosition.y,
             transform.position.z);
-        pos += _cameraHolder.forward * 30.0f;
+        pos += _cameraHolder.forward * 15.0f;
         
         return pos;
     }

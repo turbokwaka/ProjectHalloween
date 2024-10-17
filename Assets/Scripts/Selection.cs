@@ -7,7 +7,7 @@ public class Selection : MonoBehaviour
 
     public Transform playerCameraTransform;
     public Transform objectGrabPointTransform;
-    public float maxRaycastDistance = 5f; // You can adjust this value in the Inspector
+    public float maxRaycastDistance = 5f;
 
     void Update()
     {
@@ -15,8 +15,7 @@ public class Selection : MonoBehaviour
         if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, maxRaycastDistance))
         {
             HandleHighlight(hit);
-            HandleGrab(hit);
-            HandeDrop(hit);
+            HandleInteraction(hit);
         }
         else
         {
@@ -26,51 +25,46 @@ public class Selection : MonoBehaviour
 
     private void HandleHighlight(RaycastHit hit)
     {
-        // Check if the hit object is selectable
-        if (hit.collider.CompareTag("Selectable") && !hit.collider.GetComponent<ObjectGrabbable>()._objectGrabPointTransform)
-        {
-            GameObject hitObject = hit.collider.gameObject; 
+        GameObject hitObject = hit.collider.gameObject;
 
-            // If we're pointing at a new object, update the highlight
-            if (_highlightedObject != hitObject)
-            {
-                RemoveHighlight();
-
-                _highlightedObject = hitObject;
-                _highlightedOutline = _highlightedObject.GetComponent<Outline>();
-
-                if (_highlightedOutline != null)
-                {
-                    _highlightedOutline.OutlineWidth = 6f;
-                }
-            }
-        }
-        else
+        // Перевірка на наявність тега "Selectable"
+        if (!hit.collider.CompareTag("Interactable"))
         {
             RemoveHighlight();
+            return;
         }
-    }
 
-    private void HandleGrab(RaycastHit hit)
-    {
-        // Check for the grab input
-        if (Input.GetKeyDown(KeyCode.E))
+        // Перевірка, чи об'єкт захоплений
+        if (hit.collider.TryGetComponent(out ObjectGrabbable objectGrabbable) && objectGrabbable.IsGrabbed)
         {
-            if (hit.transform.TryGetComponent(out ObjectGrabbable objectGrabbable))
+            RemoveHighlight();
+            return;
+        }
+
+        // Якщо це новий об'єкт для підсвічування
+        if (_highlightedObject != hitObject)
+        {
+            RemoveHighlight();
+
+            _highlightedObject = hitObject;
+            _highlightedOutline = _highlightedObject.GetComponent<Outline>();
+
+            if (_highlightedOutline != null)
             {
-                objectGrabbable.Grab(objectGrabPointTransform);
+                _highlightedOutline.OutlineWidth = 6f;
             }
         }
     }
 
-    private void HandeDrop(RaycastHit hit)
+
+    private void HandleInteraction(RaycastHit hit)
     {
-        // Check for the grab input
-        if (Input.GetKeyDown(KeyCode.G))
+        // Check for the interaction input
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (hit.transform.TryGetComponent(out ObjectGrabbable objectGrabbable))
+            if (hit.transform.TryGetComponent(out IInteractable objectInteractable))
             {
-                objectGrabbable.Drop();
+                objectInteractable.Interact();
             }
         }
     }

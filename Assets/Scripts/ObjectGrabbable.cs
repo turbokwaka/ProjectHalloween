@@ -2,12 +2,16 @@ using UnityEngine;
 
 public class ObjectGrabbable : MonoBehaviour
 {
-    public Transform _objectGrabPointTransform;
+    private Transform _objectGrabPointTransform;
     public Transform _objectLookAt;
     private Rigidbody _objectRigidbody;
+    
+    public bool IsGrabbed { get; private set; }
 
     public void Grab(Transform objectGrabPointTransform)
     {
+        IsGrabbed = true;
+
         _objectGrabPointTransform = objectGrabPointTransform;
         _objectRigidbody = GetComponent<Rigidbody>();
         
@@ -17,6 +21,7 @@ public class ObjectGrabbable : MonoBehaviour
 
     public void Drop()
     {
+        IsGrabbed = false;
         _objectRigidbody.useGravity = true;
         _objectGrabPointTransform = null;
     }
@@ -36,7 +41,11 @@ public class ObjectGrabbable : MonoBehaviour
             lookPos.y = 0; // Keep the rotation on the horizontal plane
             var rotation = Quaternion.LookRotation(lookPos);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.fixedDeltaTime * moveSpeed);
+
+            if (Input.GetKey(KeyCode.G))
+            {
+                Drop();
+            }
         }
     }
-
 }

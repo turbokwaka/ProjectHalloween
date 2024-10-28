@@ -30,7 +30,7 @@ public class ObjectGrabbable : MonoBehaviour
     {
         if (_objectGrabPointTransform)
         {
-            float moveSpeed = 5f;
+            float moveSpeed = 15f;
             Vector3 targetPosition = _objectGrabPointTransform.position;
 
             // Smoothly move the object to a crosshair

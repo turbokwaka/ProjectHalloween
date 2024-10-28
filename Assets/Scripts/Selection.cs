@@ -6,7 +6,6 @@ public class Selection : MonoBehaviour
     private Outline _highlightedOutline;
 
     public Transform playerCameraTransform;
-    public Transform objectGrabPointTransform;
     public float maxRaycastDistance = 5f;
 
     void Update()
